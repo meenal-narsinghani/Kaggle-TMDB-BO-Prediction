@@ -1,1 +1,1 @@
-# Kaggle-TMDB-BO-Prediction
+# Kaggle TMDB Box Office Prediction
