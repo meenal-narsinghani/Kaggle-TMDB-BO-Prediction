@@ -5,7 +5,7 @@ For more details on the problem statement and dataset used, refer to the link:
 https://www.kaggle.com/c/tmdb-box-office-prediction
 
 
-The solution notebook(R) can be found at the link given below -
+The solution notebook (R) can be found at the link given below -
 https://meenal-narsinghani.github.io/Kaggle-TMDB-BO-Prediction/Kaggle-TMDB_BO_Prediction.html
 
 
