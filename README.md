@@ -1,5 +1,7 @@
 # Kaggle TMDB Box Office Prediction
 
+!https://www.kaggle.com/ikarus777/exploring-the-movies-database-eda
+
 Building a model to predict the box office figures for movies using the Random Forest algorithm.
 For more details on the problem statement and dataset used, refer to the link: 
 https://www.kaggle.com/c/tmdb-box-office-prediction
