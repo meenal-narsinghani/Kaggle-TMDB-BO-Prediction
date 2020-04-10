@@ -1,7 +1,7 @@
 ---
 title: "TMDB Box Office Prediction"
-subtitle: Kaggle Competition
-Author: Meenal Narsinghani(meenal19)
+subtitle: "Kaggle Competition"
+author: "Meenal Narsinghani(meenal19)"
 output:
   html_document:
     df_print: paged
@@ -10,12 +10,12 @@ output:
     collapsed: false
 ---
 
-
+![test](E:/Online Courses/Kaggle/Kaggle-TMDB-BO-Prediction/TMDB.jpg)
 
 ### Initial setup
 
 
-#### Loading the necessary packages
+#### Loading the required packages
 ```{r, warning=FALSE, error=FALSE, message=FALSE}
 library(tidyverse)
 library(readr)
@@ -122,6 +122,31 @@ complete.data$genre_wes <-  ifelse(stri_detect_fixed(complete.data$genres, 'West
 complete.data$genre_mus <-  ifelse(stri_detect_fixed(complete.data$genres, 'Music'),1, 0)
 complete.data$genre_fgn <-  ifelse(stri_detect_fixed(complete.data$genres, 'Foreign'),1, 0)
 complete.data$genre_tvm <-  ifelse(stri_detect_fixed(complete.data$genres, 'TV Movie'),1, 0)
+```
+
+Handling missing genres
+```{r}
+complete.data$genre_act[is.na(complete.data$genre_act)] <- 0
+complete.data$genre_adv[is.na(complete.data$genre_adv)] <- 0
+complete.data$genre_ani[is.na(complete.data$genre_ani)] <- 0
+complete.data$genre_fam[is.na(complete.data$genre_fam)] <- 0
+complete.data$genre_fty[is.na(complete.data$genre_fty)] <- 0
+complete.data$genre_hor[is.na(complete.data$genre_hor)] <- 0
+complete.data$genre_sci[is.na(complete.data$genre_sci)] <- 0
+complete.data$genre_com[is.na(complete.data$genre_com)] <- 0
+complete.data$genre_rom[is.na(complete.data$genre_rom)] <- 0
+complete.data$genre_dra[is.na(complete.data$genre_dra)] <- 1
+complete.data$genre_war[is.na(complete.data$genre_war)] <- 0
+complete.data$genre_mys[is.na(complete.data$genre_mys)] <- 0
+complete.data$genre_his[is.na(complete.data$genre_his)] <- 0
+complete.data$genre_doc[is.na(complete.data$genre_doc)] <- 0
+complete.data$genre_thl[is.na(complete.data$genre_thl)] <- 0
+complete.data$genre_cri[is.na(complete.data$genre_cri)] <- 0
+complete.data$genre_wes[is.na(complete.data$genre_wes)] <- 0
+complete.data$genre_mus[is.na(complete.data$genre_mus)] <- 0
+complete.data$genre_fgn[is.na(complete.data$genre_fgn)] <- 0
+complete.data$genre_tvm[is.na(complete.data$genre_tvm)] <- 0
+
 ```
 
 #### Production Companies
@@ -274,7 +299,7 @@ analysis_data$original_language <- NULL
 
 **Understanding the relationship between each predictor variable and the response variable `revenue`**
 
-* **Revenue**
+#### Revenue
 
 ```{r}
 summary(analysis_data$budget)
@@ -299,7 +324,7 @@ ggplot(data = analysis_data, aes(x = budget, fill = ..x..))+
 ```
 
 
-Relationship between `revenue` and `budget`
+**Relationship between `revenue` and `budget`**
 ```{r}
 ggplot(data = analysis_data[1:3000,], aes(x= budget, y = revenue, color = budget))+
   geom_point() +
@@ -315,24 +340,18 @@ ggplot(data = analysis_data[1:3000,], aes(x= budget, y = revenue, color = budget
                        y = "Revenue($Millions)")
 ```
 
-```{r}
-# ggplot(data = analysis_data, aes(x = revenue, fill = ..x..))+
-#   geom_histogram() +
-#     theme_classic()
-```
-
-* **Popularity**
+#### Popularity
 
 ```{r}
 sum(is.na(analysis_data$popularity))
 ##No missing values
 ```
 
-Relationship between `revenue` and `popularity`
+**Relationship between `revenue` and `popularity`**
 ```{r}
 ggplot(data = analysis_data[1:3000,], aes(x= popularity, y = revenue, color = popularity))+
-  geom_point(col = "#330066")+
-      geom_smooth(method = "lm", color = "darkred", fill = "grey10") +
+  geom_point()+
+      geom_smooth(method = "lm", color = "darkred", fill = "red") +
         theme_light() +
           scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
                              labels = c('$0', '$500', '$1000', '$1500')) +
@@ -343,7 +362,7 @@ ggplot(data = analysis_data[1:3000,], aes(x= popularity, y = revenue, color = po
 ```
 
 
-* **Runtime**
+#### Runtime
 
 ```{r}
 #Checking for number of missing values
@@ -353,40 +372,56 @@ summary(analysis_data$runtime)
 #Imputing the missing runtime values with median runtime value
 analysis_data$runtime[is.na(analysis_data$runtime)] <- mean(analysis_data$popularity, na.rm = T)
 
+#Distribution of movie runtime
 ggplot(data = analysis_data, aes(x = runtime, fill = ..x..))+
-  geom_histogram() +
+  geom_histogram(bins = 50) +
     scale_x_continuous(limits = c(0,250)) +
-    theme_classic()
+      theme_classic()+
+        theme(legend.position = 'none') +
+          labs(title = "Frequency Distribution of Runtime values", 
+                     x = "Runtime (in minutes)",
+                     y = "Number of movies")
 
 ```
 
 
-Relation between *revenue* and *runtime*
+**Relation between `revenue` and `runtime`**
 ```{r}
 ggplot(data = analysis_data[1:3000,], aes(x= runtime, y = revenue, color = runtime))+
   geom_point() +
       geom_smooth(method = "lm", color = "darkred", fill = "red") +
-        theme_light() +
+        scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+        theme_classic() +
+          theme(legend.position = 'none') +
             labs(title = "Relationship between Movie Length and Revenue", 
+                 x = "Runtime (in minutes)",
                  y = "Revenue($Millions)")
 ```
 
-* **Total..**
 
-*Spoken Languages*
+#### Total...
+
+**Spoken Languages**
 ```{r}
 summary(analysis_data$tot_language)
-
 table(analysis_data$tot_language)
 
 #Imputing missing tot_language with the median
 analysis_data$tot_language[is.na(analysis_data$tot_language)] <- 1
 
-ggplot(data = analysis_data[1:3000,], aes(x = as.factor(tot_language), y = revenue)) +
-  geom_boxplot()
+ggplot(data = analysis_data[1:3000,], aes(x = as.factor(tot_language), y = revenue, fill = as.factor(tot_language))) +
+  geom_boxplot() +
+    scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+      theme_classic()+
+        theme(legend.position = "none") +
+          labs(title = "Relationship between Number of Languages and Revenue", 
+               x = "Number of Languages",
+               y = "Revenue($Millions)")
 ```
 
-*Keywords*
+**Keywords**
 ```{r}
 
 sum(is.na(analysis_data$tot_keywords))
@@ -395,42 +430,40 @@ table(analysis_data$tot_keywords)
 
 analysis_data$tot_keywords[is.na(analysis_data$tot_keywords)] <- median(analysis_data$tot_keywords, na.rm = T)
 
-ggplot(data = analysis_data, aes(x = tot_keywords, fill = ..x..))+
-  geom_histogram() +
-    theme_classic()
-
-
 ggplot(data = analysis_data[1:3000,], aes(x= tot_keywords, y = revenue, color = tot_keywords))+
   geom_point() +
       geom_smooth(method = "lm", color = "darkred", fill = "red") +
-        theme_light() +
-            labs(title = "Relationship between Total Keywords and Revenue", 
-                 y = "Revenue($Millions)")
+        scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                           labels = c('$0', '$500', '$1000', '$1500')) +
+          theme_light() +
+            theme(legend.position = 'none') +
+              labs(title = "Relationship between Total Keywords and Revenue", 
+                   y = "Revenue($Millions)",
+                   x = "Number of Keywords")
 ```
 
-*Cast, Female_Cast, Male_Cast*
+**Cast**
 
 ```{r}
 sum(is.na(analysis_data$tot_cast))
 summary(analysis_data$tot_cast)
 table(analysis_data$tot_cast)
 
-ggplot(data = analysis_data, aes(x = tot_cast))+
-  geom_histogram() + 
-    geom_vline(data = analysis_data, aes(xintercept = mean(tot_cast, na.rm = T)), colour='black') + 
-      geom_vline(data = analysis_data, aes(xintercept = median(tot_cast, na.rm = T)), colour='red') 
-
 analysis_data$tot_cast[is.na(analysis_data$tot_cast)] <- median(analysis_data$tot_cast, na.rm = T)
 
 ggplot(data = analysis_data[1:3000,], aes(x= tot_cast, y = revenue, color = tot_cast))+
   geom_point() +
       geom_smooth(method = "lm", color = "darkred", fill = "red") +
-        theme_light() +
-            labs(title = "Relationship between Total Cast and Revenue", 
-                 y = "Revenue($Millions)")
+        scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                           labels = c('$0', '$500', '$1000', '$1500')) +
+          theme_light() +
+            theme(legend.position = 'none') +
+              labs(title = "Relationship between Total Cast and Revenue", 
+                   y = "Revenue($Millions)",
+                   x = "Total Cast")
 ```
 
-
+**Female Cast**
 ```{r}
 sum(is.na(analysis_data$tot_female_cast))
 analysis_data$tot_female_cast[is.na(analysis_data$tot_female_cast)] <- median(analysis_data$tot_female_cast, na.rm = T)
@@ -438,12 +471,16 @@ analysis_data$tot_female_cast[is.na(analysis_data$tot_female_cast)] <- median(an
 ggplot(data = analysis_data[1:3000,], aes(x= tot_female_cast, y = revenue, color = tot_female_cast))+
   geom_point() +
       geom_smooth(method = "lm", color = "darkred", fill = "red") +
+        scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                           labels = c('$0', '$500', '$1000', '$1500')) +
         theme_light() +
-            labs(title = "Relationship between Total Female Cast and Revenue", 
-                 y = "Revenue($Millions)")
+          theme(legend.position = 'none') +
+              labs(title = "Relationship between Total Female Cast and Revenue", 
+                   y = "Revenue($Millions)",
+                   x = "Total Female Cast")
 ```
 
-
+**Male Cast**
 ```{r}
 sum(is.na(analysis_data$tot_male_cast))
 analysis_data$tot_male_cast[is.na(analysis_data$tot_male_cast)] <- median(analysis_data$tot_male_cast, na.rm = T)
@@ -451,13 +488,18 @@ analysis_data$tot_male_cast[is.na(analysis_data$tot_male_cast)] <- median(analys
 ggplot(data = analysis_data[1:3000,], aes(x= tot_male_cast, y = revenue, color = tot_male_cast))+
   geom_point() +
       geom_smooth(method = "lm", color = "darkred", fill = "red") +
+        scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                           labels = c('$0', '$500', '$1000', '$1500')) +
         theme_light() +
+          theme(legend.position = 'none') +
             labs(title = "Relationship between Total Male Cast and Revenue", 
-                 y = "Revenue($Millions)")
+                 y = "Revenue($Millions)",
+                 x = "Total Male Cast")
 
 ```
 
-*Crew, Female_Crew, Male_Crew*
+
+**Crew**
 
 ```{r}
 sum(is.na(analysis_data$tot_crew))
@@ -466,12 +508,16 @@ analysis_data$tot_crew[is.na(analysis_data$tot_crew)] <- median(analysis_data$to
 ggplot(data = analysis_data[1:3000,], aes(x= tot_crew, y = revenue, color = tot_crew))+
   geom_point() +
       geom_smooth(method = "lm", color = "darkred", fill = "red") +
-        theme_light() +
+        scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                           labels = c('$0', '$500', '$1000', '$1500')) +
+          theme_light() +
+            theme(legend.position = 'none') +
             labs(title = "Relationship between Total Crew and Revenue", 
-                 y = "Revenue($Millions)")
+                 y = "Revenue($Millions)",
+                 x = "Total Crew")
 ```
 
-
+**Female Crew**
 ```{r}
 sum(is.na(analysis_data$tot_female_crew))
 
@@ -480,12 +526,16 @@ analysis_data$tot_female_crew[is.na(analysis_data$tot_female_crew)] <- median(an
 ggplot(data = analysis_data[1:3000,], aes(x= tot_female_crew, y = revenue, color = tot_female_crew))+
   geom_point() +
       geom_smooth(method = "lm", color = "darkred", fill = "red") +
-        theme_light() +
-            labs(title = "Relationship between Total Female Crew and Revenue", 
-                 y = "Revenue($Millions)")
+        scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                           labels = c('$0', '$500', '$1000', '$1500')) +
+          theme_light() +
+            theme(legend.position = 'none') +
+              labs(title = "Relationship between Total Female Crew and Revenue", 
+                   y = "Revenue($Millions)",
+                   x = "Total Female Crew")
 ```
 
-
+**Male Crew**
 ```{r}
 sum(is.na(analysis_data$tot_male_crew))
 analysis_data$tot_male_crew[is.na(analysis_data$tot_male_crew)] <- median(analysis_data$tot_male_crew, na.rm = T)
@@ -499,7 +549,7 @@ ggplot(data = analysis_data[1:3000,], aes(x= tot_male_crew, y = revenue, color =
 
 ```
 
-*Genres*
+**Genres**
 ```{r}
 sum(is.na(analysis_data$total_genres))
 table(analysis_data$total_genres)
@@ -508,101 +558,150 @@ summary(analysis_data$total_genres)
 analysis_data$total_genres[is.na(analysis_data$total_genres)] <- median(analysis_data$total_genres, na.rm = T)
 
 
-ggplot(data = analysis_data[1:3000,], aes(x = as.factor(total_genres), y = revenue)) +
-  geom_boxplot()
+ggplot(data = analysis_data[1:3000,], aes(x = as.factor(total_genres), y = revenue, fill = as.factor(total_genres))) +
+  geom_boxplot()+
+    scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+      theme_classic()+
+        theme(legend.position = "none") +
+          labs(title = "Relationship between Number of Genres and Revenue", 
+               x = "Number of Genres",
+               y = "Revenue($Millions)")
 
 ```
 
 
-***
+#### Indicator Variables
 
-**Categorical Variables**
-
-*Language*
+**Language**
 ```{r}
 ggplot(data = analysis_data, aes(x = language, fill = language))+
-  geom_bar()
+  geom_bar() +
+    theme_classic() +
+      theme(legend.position = 'none') +
+        labs(title = "Count of English and Non-English movies")
 ```
 
 ```{r,warning=FALSE, error=FALSE}
-ggplot(data = analysis_data[1:3000,], aes(x = language, y = revenue)) +
-  geom_boxplot()
+ggplot(data = analysis_data[1:3000,], aes(x = language, y = revenue, fill = language)) +
+  geom_boxplot() +
+    scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+      theme_classic()+
+        theme(legend.position = "none") +
+          labs(title = "Revenue distribution for English and Non-English movies", 
+               x = "Language",
+               y = "Revenue($Millions)")
+
 ```
 
 **Homepage**
 ```{r}
-ggplot(data = analysis_data[1:3000,], aes(x = as.factor(has_homepage), y = revenue)) +
-  geom_boxplot()
+ggplot(data = analysis_data[1:3000,], aes(x = as.factor(has_homepage), y = revenue, fill = as.factor(has_homepage))) +
+  geom_boxplot()+
+    scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+      theme_classic()+
+        theme(legend.position = "none") +
+          labs(title = "Impact of having movie homepage on Revenue", 
+               x = "Homepage available",
+               y = "Revenue($Millions)")
+
 ```
 
 
 **Overview**
 ```{r}
-ggplot(data = analysis_data[1:3000,], aes(x = as.factor(has_overview), y = revenue)) +
-  geom_boxplot()
+ggplot(data = analysis_data[1:3000,], aes(x = as.factor(has_overview), y = revenue, fill = as.factor(has_overview))) +
+  geom_boxplot() +
+    scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+      theme_classic()+
+        theme(legend.position = "none") +
+          labs(title = "Impact of having movie overview on Revenue", 
+               x = "Overview available",
+               y = "Revenue($Millions)")
+
 
 ```
 
 **Tagline**
 ```{r}
-ggplot(data = analysis_data[1:3000,], aes(x = as.factor(has_tagline), y = revenue)) +
-  geom_boxplot() 
-
+ggplot(data = analysis_data[1:3000,], aes(x = as.factor(has_tagline), y = revenue, fill = as.factor(has_tagline))) +
+  geom_boxplot() +
+    scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+      theme_classic()+
+        theme(legend.position = "none") +
+          labs(title = "Impact of having tagline on Revenue", 
+               x = "Tagline available",
+               y = "Revenue($Millions)")
 ```
 
-**Main Genre**
+
+#### Time of Release
 ```{r}
+summary(analysis_data$release_month)
+analysis_data$release_month[is.na(analysis_data$release_month)] <- median(as.numeric(analysis_data$release_month), na.rm = T)
 
-# sum(is.na(analysis_data$main_genre))
-# table(analysis_data$main_genre)
-# 
-# analysis_data$main_genre[is.na(analysis_data$main_genre)] <- 'Drama'
+analysis_data$release_quarter[is.na(analysis_data$release_quarter)] <- median(as.numeric(analysis_data$release_quarter), na.rm = T)
 
-# ggplot(data = analysis_data[1:3000,], aes(x = main_genre, fill = main_genre))+
-  # geom_bar()+
-    #scale_fill_brewer(palette = 3) +
-      # coord_flip() +
-      #   theme_classic()
+analysis_data$release_year[is.na(analysis_data$release_year)] <- median(analysis_data$release_year, na.rm = T)
+
+table(analysis_data$weekday)
+analysis_data$weekday[is.na(analysis_data$weekday)] <- "Wednesday"
+
+analysis_data$weekday <- factor(analysis_data$weekday, levels = c("Monday",
+                                                                  "Tuesday",
+                                                                  "Wednesday",
+                                                                  "Thursday",
+                                                                  "Friday",
+                                                                  "Saturday",
+                                                                  "Sunday"))
 ```
 
 
-```{r}
-# ggplot(analysis_data[1:3000,],  aes(x = main_genre,  y = revenue, fill = main_genre)) + 
-   # stat_summary_bin(fun.y = median, geom = "bar") +
-    # coord_flip()
-```
-
-
-**Time of release**
 ```{r}
 ggplot(analysis_data[1:3000,],  aes(x = as.factor(weekday),  y = revenue, fill = weekday)) + 
-   stat_summary_bin(fun.y = median, geom = "bar")
-
-```
-
-```{r}
-ggplot(analysis_data[1:3000,],  aes(x = as.factor(is_weekend),  y = revenue, fill = as.factor(is_weekend))) + geom_boxplot()
-```
-
-```{r}
-
-ggplot(analysis_data[1:3000,],  aes(x = as.factor(release_month),  y = revenue, fill = as.factor(release_month))) + 
-   stat_summary_bin(fun.y = median, geom = "bar")
-
-```
-
-```{r}
-
-ggplot(data = analysis_data[1:3000,], aes(x= release_year, y = revenue, color = release_year))+
-  geom_point() +
-      geom_smooth(method = "lm", color = "darkred", fill = "red") +
-        theme_light() +
-            labs(title = "Relationship between Release Year and Revenue", 
+   stat_summary_bin(fun.y = median, geom = "bar")+
+      scale_y_continuous(breaks = c(0, 5000000, 10000000, 15000000, 20000000,25000000, 30000000),
+                             labels = c('$0', '$5', '$10', '$15', '$20', '$25', '$30')) +
+        theme_classic()+
+          theme(legend.position = "none") +
+            labs(title = "Revenue split by day of release", 
+                 x = "Weekday",
                  y = "Revenue($Millions)")
 
 ```
 
-Production Companies
+```{r}
+ggplot(analysis_data[1:3000,],  aes(x = as.factor(is_weekend),  y = revenue, fill = as.factor(is_weekend))) + 
+  geom_boxplot() + 
+    scale_y_continuous(breaks = c(0, 500000000, 1000000000, 1500000000),
+                             labels = c('$0', '$500', '$1000', '$1500')) +
+        theme_classic()+
+          theme(legend.position = "none") +
+            labs(title = "Impact of releasing movie on weekend", 
+                 x = "Movie released on weekend",
+                 y = "Revenue($Millions)")
+
+```
+
+```{r}
+ggplot(analysis_data[1:3000,],  aes(x = as.factor(release_month),  y = revenue, fill = as.factor(release_month))) + 
+   stat_summary_bin(fun.y = median, geom = "bar")+
+     scale_y_continuous(breaks = c(0, 10000000, 20000000,30000000),
+                        labels = c('$0', '$10', '$20', '$30')) +
+        theme_classic()+
+          theme(legend.position = "none") +
+            labs(title = "Revenue split by month of release", 
+                 x = "Release Month",
+                 y = "Revenue($Millions)")
+
+```
+
+
+#### Production Companies
 
 ```{r}
 analysis_data %>% group_by(main_prod_comp) %>% count() %>% arrange(desc(n))
@@ -633,8 +732,7 @@ analysis_data$tot_prod_comp[is.na(analysis_data$tot_prod_comp)] <- median(analys
 ```
 
 
-Production Countries
-
+#### Production Countries
 ```{r}
 analysis_data %>% group_by(main_prod_country) %>% count() %>% arrange(desc(n))
 
@@ -653,24 +751,12 @@ analysis_data$GR <- ifelse(analysis_data$main_prod_country == "Germany", 1,0)
 analysis_data$IN <- ifelse(analysis_data$main_prod_country == "India", 1,0)
 analysis_data$OT <- ifelse(!analysis_data$main_prod_country %in% big_country , 1,0)
 
-
-#analysis_data$big_country <- ifelse(analysis_data$main_prod_country %in% big_country, "Big", "Small")
-
-#sum(is.na(analysis_data$big_country))
 analysis_data$main_prod_country <- NULL
 analysis_data$production_countries <- NULL
-
-#ggplot(analysis_data[1:3000,],  aes(x = big_country,  y = revenue, fill = big_country)) + geom_boxplot()
-
 
 summary(analysis_data$tot_prod_country) 
 analysis_data$tot_prod_country[is.na(analysis_data$tot_prod_country)] <- median(analysis_data$tot_prod_country, na.rm = T)
 
-
-```
-
-```{r}
-apply(is.na(analysis_data),2,sum)
 ```
 
 ```{r}
@@ -682,67 +768,24 @@ analysis_data$GR[is.na(analysis_data$GR)] <- 0
 analysis_data$IN[is.na(analysis_data$IN)] <- 0
 ```
 
-```{r}
-analysis_data$genre_act[is.na(analysis_data$genre_act)] <- 0
-analysis_data$genre_adv[is.na(analysis_data$genre_adv)] <- 0
-analysis_data$genre_ani[is.na(analysis_data$genre_ani)] <- 0
-analysis_data$genre_fam[is.na(analysis_data$genre_fam)] <- 0
-analysis_data$genre_fty[is.na(analysis_data$genre_fty)] <- 0
-analysis_data$genre_hor[is.na(analysis_data$genre_hor)] <- 0
-analysis_data$genre_sci[is.na(analysis_data$genre_sci)] <- 0
-analysis_data$genre_com[is.na(analysis_data$genre_com)] <- 0
-analysis_data$genre_rom[is.na(analysis_data$genre_rom)] <- 0
-
-analysis_data$genre_dra[is.na(analysis_data$genre_dra)] <- 1
-
-analysis_data$genre_war[is.na(analysis_data$genre_war)] <- 0
-analysis_data$genre_mys[is.na(analysis_data$genre_mys)] <- 0
-analysis_data$genre_his[is.na(analysis_data$genre_his)] <- 0
-analysis_data$genre_doc[is.na(analysis_data$genre_doc)] <- 0
-analysis_data$genre_thl[is.na(analysis_data$genre_thl)] <- 0
-analysis_data$genre_cri[is.na(analysis_data$genre_cri)] <- 0
-analysis_data$genre_wes[is.na(analysis_data$genre_wes)] <- 0
-analysis_data$genre_mus[is.na(analysis_data$genre_mus)] <- 0
-analysis_data$genre_fgn[is.na(analysis_data$genre_fgn)] <- 0
-analysis_data$genre_tvm[is.na(analysis_data$genre_tvm)] <- 0
-
-```
-
-```{r}
-summary(analysis_data$release_month)
-analysis_data$release_month[is.na(analysis_data$release_month)] <- median(as.numeric(analysis_data$release_month), na.rm = T)
-
-analysis_data$release_quarter[is.na(analysis_data$release_quarter)] <- median(as.numeric(analysis_data$release_quarter), na.rm = T)
-
-analysis_data$release_year[is.na(analysis_data$release_year)] <- median(analysis_data$release_year, na.rm = T)
-
-table(analysis_data$weekday)
-analysis_data$weekday[is.na(analysis_data$weekday)] <- "Wednesday"
-```
 
 
-Estimating the missing budget values
-```{r}
+### Analytical Dataset Creation
 
-```
-
-
-
-
-Subsetting the data for model fitting
 ```{r}
 analysis_data$has_homepage <- as.factor(analysis_data$has_homepage)
 analysis_data$has_overview <- as.factor(analysis_data$has_overview)
 analysis_data$has_tagline <- as.factor(analysis_data$has_tagline)
 analysis_data$part_of_collection <- as.factor(analysis_data$part_of_collection)
+
 analysis_data$weekday <- as.factor(analysis_data$weekday)
 analysis_data$is_weekend <- as.factor(analysis_data$is_weekend)
 analysis_data$release_month <- as.factor(analysis_data$release_month)
 analysis_data$release_quarter <- as.factor(analysis_data$release_quarter)
-#analysis_data$main_genre <- as.factor(analysis_data$main_genre)
+
 analysis_data$production_comp <- as.factor(analysis_data$production_comp)
 analysis_data$language <- as.factor(analysis_data$language)
-#analysis_data$big_country <- as.factor(analysis_data$big_country)
+
 analysis_data$US <- as.factor(analysis_data$US)
 analysis_data$UK <- as.factor(analysis_data$UK)
 analysis_data$FR <- as.factor(analysis_data$FR)
@@ -750,8 +793,6 @@ analysis_data$CA <- as.factor(analysis_data$CA)
 analysis_data$GR <- as.factor(analysis_data$GR)
 analysis_data$IN <- as.factor(analysis_data$IN)
 analysis_data$OT <- as.factor(analysis_data$OT)
-
-# analysis_data[, grep("genre_", colnames(analysis_data))] <- as.factor(analysis_data[, grep("genre_", colnames(analysis_data))])
 
 analysis_data$genre_act <- as.factor(analysis_data$genre_act)
 analysis_data$genre_adv <- as.factor(analysis_data$genre_adv)
@@ -776,13 +817,11 @@ analysis_data$genre_tvm <- as.factor(analysis_data$genre_tvm)
 
 glimpse(analysis_data)
 train.data <- analysis_data[1:3000,]
-
 ```
 
 
-Model
+### Model Building
 ```{r}
-
 apply(is.na(train.data),2,sum)
 glimpse(train.data)
 
@@ -792,30 +831,28 @@ model.rf <- randomForest( log10(revenue) ~ . , data = train.data,
 model.rf
 
 summary(model.rf)
+```
 
-importance <- importance(model.rf)
-varImpPlot(model.rf)
+#### Variable Importance plot
+```{r}
+# Create an object for importance of variables
+importance <- importance(model.rf) 
 
-model.rf$importance
+# Create data frame using importance. 
+varImportance <- data.frame(Variables = row.names(importance), 
+                            Importance = round(importance[,'IncNodePurity'], 0))
 
-
-plot(model.rf$mse, type='l', col=2, lwd=2, xlab = "ntree", ylab = "OOB Error")
-
-
-
-# oob.err<- rep(0, 13)
-# test.err<- rep(0, 13)
-# for(i in 1:13){
-  # fit<- randomForest(medv~., data = boston.train, mtry=i)
-#   oob.err[i]<- fit$mse[500]
-#   test.err[i]<- mean((boston.test$medv-predict(fit, boston.test))^2)
-#   cat(i, " ")
-# }
+# Create interactive plot.  
+ggplotly(ggplot(varImportance, aes(x = reorder(Variables, Importance), 
+                           y = Importance, fill = Importance)) +
+       geom_bar(stat='identity') + 
+       labs(title = 'Importance of predictors', x = 'Predictors', y = 'rmsle') +
+       coord_flip() + 
+       theme_light())
 ```
 
 
-
-
+### Prediction on test dataset
 ```{r}
 test.data <- analysis_data[3001:7398,]
 prediction <- predict(model.rf, test.data)
