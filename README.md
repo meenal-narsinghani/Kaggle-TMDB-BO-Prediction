@@ -27,6 +27,24 @@ Two data files [train.csv](train.csv) and [test.csv](test.csv) were provided as 
 More details can regarding the data can be found [here](https://www.kaggle.com/c/tmdb-box-office-prediction/data).
 
 #### Analytical Approach
+The [R notebook](https://meenal-narsinghani.github.io/Kaggle-TMDB-BO-Prediction/Kaggle-TMDB_BO_Prediction.html) shows the end-to-end analytical process (described below) and its implementation to address this business problem -
+ 
+ 1. Intial Setup & Loading the data
+ 2. Feature Engineering
+ 3. Exploratory Data Analysis
+ 4. Missing Values treatment
+ 5. Analytical Dataset creation
+ 6. Model Building
+ 7. Prediction on Test dataset
+
+#### Evaluation
+
+For each movie (id) available in the test data set, international box office revenue had to be predicted. Submissions were evaluated on Root-Mean-Squared-Logarithmic-Error (RMSLE) between the predicted value and the actual revenue.
+
+I took up this competition to practice and polish my analytical skills. As the competition was over long ago, I could not make it to the public leaderboard.
+
+
+
 
 
 
